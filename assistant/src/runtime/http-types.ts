@@ -224,8 +224,13 @@ export interface RuntimeMessagePayload {
   };
   slackMessage?: {
     channelId: string;
+    channelName?: string;
     channelTs: string;
     threadTs?: string;
+    sender?: {
+      displayName?: string;
+      externalUserId?: string;
+    };
     messageLink?: {
       appUrl?: string;
       webUrl?: string;
