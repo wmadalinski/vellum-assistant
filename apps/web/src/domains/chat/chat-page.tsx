@@ -11,8 +11,7 @@ import { useIsMobile } from "@/hooks/use-is-mobile.js";
 import { useAuth } from "@/lib/auth/auth-provider.js";
 import { useAssistantLifecycle } from "@/domains/chat/hooks/use-assistant-lifecycle.js";
 import {
-  interactionReducer,
-  INITIAL_INTERACTION_STATE,
+  createInteractionStore,
 } from "@/domains/chat/lib/interaction-state-machine.js";
 import {
   turnReducer,
@@ -55,10 +54,7 @@ export function ChatPage() {
 
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [turnState, dispatchTurn] = useReducer(turnReducer, INITIAL_TURN_STATE);
-  const [interactionState, dispatchInteraction] = useReducer(
-    interactionReducer,
-    INITIAL_INTERACTION_STATE,
-  );
+  const [interactionStore] = useState(createInteractionStore);
   const [input, setInput] = useState("");
   const [error, setError] = useState<{ message: string } | null>(null);
   const [compactionCircuitOpenUntil, setCompactionCircuitOpenUntil] =
@@ -126,8 +122,7 @@ export function ChatPage() {
     error,
     setError,
     isLoadingHistory: false,
-    interactionState,
-    dispatchInteraction,
+    interactionStore,
     conversations: [],
     activeConversationKey: null,
     activeConversation: undefined,
@@ -268,7 +263,7 @@ export function ChatPage() {
       assistantId={assistantId}
       sendMessage={sendMessage}
       dispatchTurn={dispatchTurn}
-      dispatchInteraction={dispatchInteraction}
+      interactionStore={interactionStore}
     >
       <ChatRouteContent {...chatRouteProps} />
     </ChatProvider>

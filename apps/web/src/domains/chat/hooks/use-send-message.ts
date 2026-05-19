@@ -40,7 +40,7 @@ import { recordChatDiagnostic } from "@/domains/chat/lib/diagnostics.js";
 import { newStableId } from "@/domains/chat/lib/stable-id.js";
 import { saveDismissedSurfaceIds } from "@/domains/chat/lib/dismissedSurfacesStorage.js";
 import { isSending, type TurnState, type DomainEvent } from "@/domains/chat/lib/turn-state-machine.js";
-import type { InteractionEvent } from "@/domains/chat/lib/interaction-state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/lib/interaction-state-machine.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { PreChatOnboardingContext } from "@/lib/onboarding/prechat.js";
@@ -109,7 +109,7 @@ interface UseSendMessageParams {
   setMessages: Dispatch<SetStateAction<DisplayMessage[]>>;
   setError: Dispatch<SetStateAction<ChatError | null>>;
   dispatchConversationList: Dispatch<ConversationListAction>;
-  dispatchInteraction: Dispatch<InteractionEvent>;
+  interactionStore: InteractionStoreApi;
   setStreamRetryNonce: Dispatch<SetStateAction<number>>;
   setInput: Dispatch<SetStateAction<string>>;
   dispatchTurn: Dispatch<DomainEvent>;
@@ -156,7 +156,7 @@ export function useSendMessage({
   setMessages,
   setError,
   dispatchConversationList,
-  dispatchInteraction,
+  interactionStore,
   setStreamRetryNonce,
   setInput,
   dispatchTurn,
@@ -319,13 +319,13 @@ export function useSendMessage({
             );
             if (!isCurrentSendScope(effectiveConversationKey)) return;
             if (interactions.pendingSecret) {
-              dispatchInteraction({ type: "SHOW_SECRET", payload: parsePendingSecretState(interactions.pendingSecret) });
+              interactionStore.dispatch({ type: "SHOW_SECRET", payload: parsePendingSecretState(interactions.pendingSecret) });
               if (!reply) return;
             }
             if (interactions.pendingConfirmation) {
               const { confData, state } = parsePendingConfirmationData(interactions.pendingConfirmation);
               restoredConfData = confData;
-              dispatchInteraction({ type: "SHOW_CONFIRMATION", payload: state });
+              interactionStore.dispatch({ type: "SHOW_CONFIRMATION", payload: state });
               if (!reply) return;
             }
           } catch {
@@ -384,10 +384,10 @@ export function useSendMessage({
               if (!isCurrentSendScope(effectiveConversationKey)) return prev;
               const result = attachConfirmationToToolCall(prev, capturedConfData);
               if (result.attachedToolCallId) {
-                dispatchInteraction({ type: "SET_INLINE_CONFIRMATION_TOOL_CALL_ID", toolCallId: result.attachedToolCallId });
+                interactionStore.dispatch({ type: "SET_INLINE_CONFIRMATION_TOOL_CALL_ID", toolCallId: result.attachedToolCallId });
                 confirmationToolCallMapRef.current.set(capturedConfData.requestId, result.attachedToolCallId);
               } else {
-                dispatchInteraction({ type: "SET_INLINE_CONFIRMATION_TOOL_CALL_ID", toolCallId: null });
+                interactionStore.dispatch({ type: "SET_INLINE_CONFIRMATION_TOOL_CALL_ID", toolCallId: null });
               }
               return result.updatedMessages;
             });
@@ -426,7 +426,7 @@ export function useSendMessage({
         return;
       }
       setError(null);
-      dispatchInteraction({ type: "RESET_SECRET_AND_CONFIRMATION" });
+      interactionStore.dispatch({ type: "RESET_SECRET_AND_CONFIRMATION" });
       confirmationToolCallMapRef.current.clear();
       // Clear pending confirmations and dismiss interactive surfaces in a
       // single functional updater so the two transforms compose correctly
@@ -610,7 +610,7 @@ export function useSendMessage({
     dispatchTurn({ type: "GENERATION_CANCELLED" });
     setMessages(stopStreamingAndClearConfirmations);
     needsNewBubbleRef.current = true;
-    dispatchInteraction({ type: "RESET_ALL" });
+    interactionStore.dispatch({ type: "RESET_ALL" });
     dispatchSubagent({ type: "SUBAGENT_RESET" });
     confirmationToolCallMapRef.current.clear();
     dispatchConversationList({ type: "REMOVE_PROCESSING_KEY", key: activeConversationKey });

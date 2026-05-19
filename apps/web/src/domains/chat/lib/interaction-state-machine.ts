@@ -2,12 +2,18 @@
  * Interaction-level state machine for user-facing prompts.
  *
  * Consolidates pending secret, confirmation, and contact-request state into a
- * single reducer with typed domain events and pure transitions.  Follows the
- * same pattern as the turn state machine (`turn-state-machine.ts`).
+ * Zustand store with typed domain events and pure transitions.  The existing
+ * `interactionReducer` pure function is reused unchanged inside the store.
  *
+ * Consumers read state via selector subscriptions (`useStore(store, selector)`)
+ * and dispatch events via `store.dispatch(event)`.  Non-reactive reads (e.g.
+ * inside `setTimeout` callbacks) use `store.getState()` directly.
+ *
+ * @see https://zustand.docs.pmnd.rs/
  * @see https://react.dev/learn/extracting-state-logic-into-a-reducer
- * @see https://react.dev/learn/scaling-up-with-reducer-and-context
  */
+
+import { createStore, type StoreApi } from "zustand";
 
 import type {
   PendingSecretState,
@@ -387,4 +393,44 @@ export function interactionReducer(
     default:
       return state;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Zustand store
+// ---------------------------------------------------------------------------
+
+/**
+ * Store API extended with a `dispatch` method that applies domain events
+ * through the pure `interactionReducer`.
+ *
+ * `dispatch` lives on the store API (alongside `getState`, `setState`,
+ * `subscribe`) rather than inside the state object.  This keeps the state
+ * shape identical to `InteractionState` — selectors and `getState()` never
+ * need to filter out action methods.
+ *
+ * @see https://zustand.docs.pmnd.rs/guides/flux-inspired-practice — "Manual Dispatch" pattern
+ * @see https://zustand.docs.pmnd.rs/guides/initialize-state-with-props  — scoped store + context
+ */
+export type InteractionStoreApi = StoreApi<InteractionState> & {
+  dispatch: (event: InteractionEvent) => void;
+};
+
+/**
+ * Create a new Zustand store for interaction state.
+ *
+ * Each call returns an independent store instance so the store is scoped to a
+ * component tree (not a global singleton).  The pure `interactionReducer` is
+ * reused inside `dispatch`, keeping all transition logic in one place.
+ *
+ * Consumers read state reactively via `useStore(store, selector)` and
+ * non-reactively via `store.getState()`.
+ */
+export function createInteractionStore(): InteractionStoreApi {
+  const store = createStore<InteractionState>(() => ({
+    ...INITIAL_INTERACTION_STATE,
+  }));
+  return Object.assign(store, {
+    dispatch: (event: InteractionEvent) =>
+      store.setState((state) => interactionReducer(state, event)),
+  });
 }

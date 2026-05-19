@@ -2,6 +2,7 @@ import { mock } from "bun:test";
 
 import type { StreamHandlerContext } from "@/domains/chat/utils/stream-handlers/types.js";
 import type { TurnState } from "@/domains/chat/lib/turn-state-machine.js";
+import { createInteractionStore } from "@/domains/chat/lib/interaction-state-machine.js";
 
 /** Build a minimal mock StreamHandlerContext with spies on every callback. */
 export function makeCtx(
@@ -25,7 +26,7 @@ export function makeCtx(
     streamRef: { current: { cancel: mock(() => {}) } as never },
     cancelReconciliation: mock(() => {}),
     startReconciliationLoop: mock(() => {}),
-    dispatchInteraction: mock(() => {}),
+    interactionStore: Object.assign(createInteractionStore(), { dispatch: mock(() => {}) }),
     confirmationToolCallMapRef: { current: new Map() },
     setAssetsRefreshKey: mock(() => {}),
     dismissedSurfaceIdsRef: { current: new Set() },

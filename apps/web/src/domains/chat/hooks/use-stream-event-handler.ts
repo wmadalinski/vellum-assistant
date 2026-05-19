@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { InteractionEvent } from "@/domains/chat/lib/interaction-state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/lib/interaction-state-machine.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type {
@@ -118,7 +118,7 @@ export interface UseStreamEventHandlerParams {
   startReconciliationLoop: (epoch: number) => void;
 
   // --- Interaction state (secret, confirmation, contact request) ---
-  dispatchInteraction: Dispatch<InteractionEvent>;
+  interactionStore: InteractionStoreApi;
   confirmationToolCallMapRef: MutableRefObject<Map<string, string>>;
 
   // --- Subagent state ---
@@ -199,7 +199,7 @@ export function useStreamEventHandler(
     streamRef,
     cancelReconciliation,
     startReconciliationLoop,
-    dispatchInteraction,
+    interactionStore,
     confirmationToolCallMapRef,
     dispatchSubagent,
 
@@ -308,7 +308,7 @@ export function useStreamEventHandler(
         streamRef,
         cancelReconciliation,
         startReconciliationLoop,
-        dispatchInteraction,
+        interactionStore,
         confirmationToolCallMapRef,
         dispatchSubagent,
 
@@ -482,7 +482,7 @@ export function useStreamEventHandler(
       turnStateRef,
       setError,
       streamRef,
-      dispatchInteraction,
+      interactionStore,
       confirmationToolCallMapRef,
       dispatchSubagent,
       setAssetsRefreshKey,

@@ -21,6 +21,7 @@
 import * as Sentry from "@sentry/react";
 import { Loader2 } from "lucide-react";
 import { type Dispatch, type FormEvent, type MutableRefObject, type ReactNode, type RefObject, type SetStateAction, startTransition, useCallback, useEffect, useMemo, useRef } from "react";
+import { useStore } from "zustand";
 
 import { ChatBody } from "@/domains/chat/components/chat-body.js";
 import { ConversationStarterGrid } from "@/domains/chat/components/conversation-starter-grid.js";
@@ -66,7 +67,7 @@ import { pickRandomPlaceholder } from "@/domains/chat/lib/empty-state-constants.
 import { useEmptyStateGreeting } from "@/domains/chat/lib/use-empty-state-greeting.js";
 import { getChatBillingBannerDecision, shouldShowGenericChatErrorNotice } from "@/domains/chat/lib/error-classification.js";
 import { fetchOlderHistoryPage } from "@/domains/chat/lib/history.js";
-import { type InteractionState } from "@/domains/chat/lib/interaction-state-machine.js";
+import { type InteractionStoreApi } from "@/domains/chat/lib/interaction-state-machine.js";
 import type { SubagentEntry, SubagentMapState } from "@/domains/chat/lib/subagent-state.js";
 import type { DisplayAttachment, DisplayMessage } from "@/domains/chat/lib/reconcile.js";
 import { buildTranscriptItems } from "@/domains/chat/lib/transcript/build-items.js";
@@ -84,7 +85,7 @@ import { haptic } from "@/utils/haptics.js";
 import { isChannelConversation as _isChannelConversation } from "@/domains/chat/lib/conversation-channel.js";
 import { getDiskPressureChatBlockReason } from "@/domains/assistant/disk-pressure.js";
 import type { DiskPressureStatusEventPayload } from "@/domains/assistant/use-disk-pressure-monitor.js";
-import type { InteractionEvent } from "@/domains/chat/lib/interaction-state-machine.js";
+
 import type { DomainEvent } from "@/domains/chat/lib/turn-state-machine.js";
 import type { QuestionResponseEntry, AllowlistOption, ScopeOption, DirectoryScopeOption, ConfirmationDecision } from "@/domains/chat/lib/event-types.js";
 import type { CharacterComponents, CharacterTraits } from "@/domains/avatar/types.js";
@@ -224,7 +225,6 @@ export interface ChatRouteRefs {
   pendingLocalDeletionsRef: MutableRefObject<Set<string>>;
   confirmationToolCallMapRef: MutableRefObject<Map<string, string>>;
   turnStateRef: MutableRefObject<TurnState>;
-  interactionStateRef: MutableRefObject<InteractionState>;
   reconcileAfterNextStreamOpenRef: MutableRefObject<boolean>;
 }
 
@@ -267,8 +267,7 @@ export interface ChatRouteContentProps {
   isLoadingHistory: boolean;
 
   // Interaction
-  interactionState: InteractionState;
-  dispatchInteraction: Dispatch<InteractionEvent>;
+  interactionStore: InteractionStoreApi;
 
   // Conversation
   conversations: Conversation[];
@@ -390,8 +389,7 @@ export function ChatRouteContent({
   error,
   setError,
   isLoadingHistory,
-  interactionState,
-  dispatchInteraction,
+  interactionStore,
   conversations: _conversations,
   activeConversationKey,
   activeConversation,
@@ -510,25 +508,24 @@ export function ChatRouteContent({
     pendingLocalDeletionsRef: _pendingLocalDeletionsRef,
     confirmationToolCallMapRef: _confirmationToolCallMapRef,
     turnStateRef: _turnStateRef,
-    interactionStateRef,
     reconcileAfterNextStreamOpenRef: _reconcileAfterNextStreamOpenRef,
   } = refs;
 
   // -------------------------------------------------------------------------
-  // Derived interaction state
+  // Derived interaction state (selector-based subscriptions)
   // -------------------------------------------------------------------------
 
-  const pendingSecret = interactionState.pendingSecret;
-  const pendingConfirmation = interactionState.pendingConfirmation;
-  const pendingContactRequest = interactionState.pendingContactRequest;
-  const pendingQuestion = interactionState.pendingQuestion;
-  const isSubmittingSecret = interactionState.isSubmittingSecret;
-  const isSubmittingConfirmation = interactionState.isSubmittingConfirmation;
-  const isSubmittingContactRequest = interactionState.isSubmittingContactRequest;
-  const isSubmittingQuestion = interactionState.isSubmittingQuestion;
-  const contactRequestAccepted = interactionState.contactRequestAccepted;
-  const secretSaved = interactionState.secretSaved;
-  const inlineConfirmationToolCallId = interactionState.inlineConfirmationToolCallId;
+  const pendingSecret = useStore(interactionStore, (s) => s.pendingSecret);
+  const pendingConfirmation = useStore(interactionStore, (s) => s.pendingConfirmation);
+  const pendingContactRequest = useStore(interactionStore, (s) => s.pendingContactRequest);
+  const pendingQuestion = useStore(interactionStore, (s) => s.pendingQuestion);
+  const isSubmittingSecret = useStore(interactionStore, (s) => s.isSubmittingSecret);
+  const isSubmittingConfirmation = useStore(interactionStore, (s) => s.isSubmittingConfirmation);
+  const isSubmittingContactRequest = useStore(interactionStore, (s) => s.isSubmittingContactRequest);
+  const isSubmittingQuestion = useStore(interactionStore, (s) => s.isSubmittingQuestion);
+  const contactRequestAccepted = useStore(interactionStore, (s) => s.contactRequestAccepted);
+  const secretSaved = useStore(interactionStore, (s) => s.secretSaved);
+  const inlineConfirmationToolCallId = useStore(interactionStore, (s) => s.inlineConfirmationToolCallId);
   const inlineConfirmationAttached = inlineConfirmationToolCallId !== null;
 
   // -------------------------------------------------------------------------
@@ -929,8 +926,8 @@ export function ChatRouteContent({
   // -------------------------------------------------------------------------
 
   const handleDismissPendingQuestion = useCallback(() => {
-    const snapshot = interactionStateRef.current.pendingQuestion;
-    dispatchInteraction({ type: "DISMISS_QUESTION" });
+    const snapshot = interactionStore.getState().pendingQuestion;
+    interactionStore.dispatch({ type: "DISMISS_QUESTION" });
     if (!snapshot) return;
     const ctx = streamContextRef.current;
     if (!ctx) return;
@@ -953,7 +950,7 @@ export function ChatRouteContent({
           tags: { context: "submit_question_response_close" },
         });
       });
-  }, [dispatchInteraction, interactionStateRef, streamContextRef]);
+  }, [interactionStore, streamContextRef]);
 
   // -------------------------------------------------------------------------
   // Empty state placeholder (stable per mount)

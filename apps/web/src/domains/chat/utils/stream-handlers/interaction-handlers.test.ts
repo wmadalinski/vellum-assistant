@@ -17,7 +17,7 @@ describe("handleSecretRequest", () => {
     expect(ctx.dispatchTurn).toHaveBeenCalledWith({
       type: "SECRET_REQUEST",
     });
-    expect(ctx.dispatchInteraction).toHaveBeenCalledWith(
+    expect(ctx.interactionStore.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "SHOW_SECRET",
         payload: expect.objectContaining({ requestId: "sr-1" }),
@@ -36,7 +36,7 @@ describe("handleConfirmationRequest", () => {
     expect(ctx.dispatchTurn).toHaveBeenCalledWith({
       type: "CONFIRMATION_REQUEST",
     });
-    expect(ctx.dispatchInteraction).toHaveBeenCalledWith(
+    expect(ctx.interactionStore.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({ type: "SHOW_CONFIRMATION" }),
     );
     expect(ctx.setMessages).toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe("handleContactRequest", () => {
     expect(ctx.dispatchTurn).toHaveBeenCalledWith({
       type: "CONTACT_REQUEST",
     });
-    expect(ctx.dispatchInteraction).toHaveBeenCalledWith(
+    expect(ctx.interactionStore.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "SHOW_CONTACT_REQUEST",
         payload: expect.objectContaining({ requestId: "ctc-1" }),

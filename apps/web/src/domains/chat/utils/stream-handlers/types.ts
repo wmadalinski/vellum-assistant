@@ -4,7 +4,7 @@ import type {
   SetStateAction,
 } from "react";
 
-import type { InteractionEvent } from "@/domains/chat/lib/interaction-state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/lib/interaction-state-machine.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { ChatEventStream } from "@/domains/chat/lib/api.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
@@ -67,7 +67,7 @@ export interface StreamHandlerContext {
   startReconciliationLoop: (epoch: number) => void;
 
   // --- Interaction state ---
-  dispatchInteraction: Dispatch<InteractionEvent>;
+  interactionStore: InteractionStoreApi;
   confirmationToolCallMapRef: MutableRefObject<Map<string, string>>;
 
   // --- Subagent state ---
