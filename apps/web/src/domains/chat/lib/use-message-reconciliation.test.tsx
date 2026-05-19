@@ -19,7 +19,7 @@ import { createElement, type Dispatch, type RefObject, type SetStateAction } fro
 
 import type { RuntimeMessage } from "@/domains/chat/lib/api.js";
 import type { DisplayMessage } from "@/domains/chat/lib/reconcile.js";
-import { INITIAL_TURN_STATE, type DomainEvent, type TurnState } from "@/domains/chat/lib/turn-state-machine.js";
+import { INITIAL_TURN_STATE, type DomainEvent, type TurnState, turnReducer } from "@/domains/chat/lib/turn-state-machine.js";
 import { useTurnStore } from "@/domains/chat/lib/use-turn-store.js";
 import { newStableId } from "@/domains/chat/lib/stable-id.js";
 
@@ -154,14 +154,17 @@ function createHarness(overrides?: {
     messages = typeof updater === "function" ? updater(messages) : updater;
   };
 
-  // Set up turn store state for the test
-  useTurnStore.setState(overrides?.turnState ?? INITIAL_TURN_STATE);
-  // Intercept dispatches for assertions
-  const originalDispatch = useTurnStore.getState().dispatch;
+  // Replace store state AND dispatch with a fresh spy that also applies the
+  // reducer. This avoids stacking wrappers across tests since we never
+  // reference the previous dispatch — each call is self-contained.
   useTurnStore.setState({
+    ...(overrides?.turnState ?? INITIAL_TURN_STATE),
     dispatch: (event: DomainEvent) => {
       dispatchedEvents.push(event);
-      originalDispatch(event);
+      useTurnStore.setState((state) => {
+        const next = turnReducer(state, event);
+        return next === state ? state : next;
+      });
     },
   });
 
