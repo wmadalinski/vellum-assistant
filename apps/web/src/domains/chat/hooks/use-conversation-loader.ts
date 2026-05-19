@@ -33,7 +33,7 @@ import {
 import type { TranscriptPaginationState } from "@/domains/chat/lib/transcript/types.js";
 import type { ContextWindowUsage } from "@/domains/chat/components/context-window-indicator.js";
 import type { DomainEvent } from "@/domains/chat/lib/turn-state-machine.js";
-import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import { haptic } from "@/utils/haptics.js";

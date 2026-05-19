@@ -1,16 +1,17 @@
 /**
- * Interaction-level state machine for user-facing prompts.
+ * Zustand store for interaction-prompt state (secret, confirmation,
+ * contact-request, question).
  *
- * Consolidates pending secret, confirmation, and contact-request state into a
- * Zustand store with typed domain events and pure transitions.  The existing
- * `interactionReducer` pure function is reused unchanged inside the store.
+ * Manages four independent prompt lifecycles — each can be pending, submitting,
+ * or idle simultaneously.  NOT a finite state machine (no single state
+ * discriminant); contrast with `turn-state-machine.ts` which tracks a single
+ * `TurnPhase`.
  *
  * Consumers read state via selector subscriptions (`useStore(store, selector)`)
  * and dispatch events via `store.dispatch(event)`.  Non-reactive reads (e.g.
  * inside `setTimeout` callbacks) use `store.getState()` directly.
  *
- * @see https://zustand.docs.pmnd.rs/
- * @see https://react.dev/learn/extracting-state-logic-into-a-reducer
+ * @see https://zustand.docs.pmnd.rs/guides/flux-inspired-practice
  */
 
 import { createStore, type StoreApi } from "zustand";

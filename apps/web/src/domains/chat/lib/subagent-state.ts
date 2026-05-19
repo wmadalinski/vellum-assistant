@@ -8,7 +8,7 @@
  *
  * Follows the same pattern as the turn state machine
  * (`turn-state-machine.ts`) and interaction state machine
- * (`interactions/state-machine.ts`).
+ * (`interactions/store.ts`).
  *
  * @see https://react.dev/learn/extracting-state-logic-into-a-reducer
  */

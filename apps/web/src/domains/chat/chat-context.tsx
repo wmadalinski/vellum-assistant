@@ -32,7 +32,7 @@ import {
 
 import type { DisplayAttachment, DisplayMessage } from "@/domains/chat/lib/reconcile.js";
 import type { DomainEvent } from "@/domains/chat/lib/turn-state-machine.js";
-import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 
 // ---------------------------------------------------------------------------
 // State context — changes frequently (messages update during streaming)

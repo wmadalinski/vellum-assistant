@@ -67,7 +67,7 @@ import { pickRandomPlaceholder } from "@/domains/chat/lib/empty-state-constants.
 import { useEmptyStateGreeting } from "@/domains/chat/lib/use-empty-state-greeting.js";
 import { getChatBillingBannerDecision, shouldShowGenericChatErrorNotice } from "@/domains/chat/lib/error-classification.js";
 import { fetchOlderHistoryPage } from "@/domains/chat/lib/history.js";
-import { type InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import { type InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 import type { SubagentEntry, SubagentMapState } from "@/domains/chat/lib/subagent-state.js";
 import type { DisplayAttachment, DisplayMessage } from "@/domains/chat/lib/reconcile.js";
 import { buildTranscriptItems } from "@/domains/chat/lib/transcript/build-items.js";

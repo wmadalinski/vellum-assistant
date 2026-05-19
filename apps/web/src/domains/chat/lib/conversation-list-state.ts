@@ -13,7 +13,7 @@
  * - `processingKeys` — conversations with in-flight assistant responses
  * - `attentionKeys` — conversations needing user attention (pending interactions)
  *
- * Follows the same pattern as `interactions/state-machine.ts` and
+ * Follows the same pattern as `interactions/store.ts` and
  * `turn-state-machine.ts`.
  *
  * @see https://react.dev/learn/extracting-state-logic-into-a-reducer

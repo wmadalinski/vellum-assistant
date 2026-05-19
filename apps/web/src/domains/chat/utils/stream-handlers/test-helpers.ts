@@ -2,7 +2,7 @@ import { mock } from "bun:test";
 
 import type { StreamHandlerContext } from "@/domains/chat/utils/stream-handlers/types.js";
 import type { TurnState } from "@/domains/chat/lib/turn-state-machine.js";
-import { createInteractionStore } from "@/domains/chat/interactions/state-machine.js";
+import { createInteractionStore } from "@/domains/chat/interactions/store.js";
 
 /** Build a minimal mock StreamHandlerContext with spies on every callback. */
 export function makeCtx(

@@ -6,7 +6,7 @@
  * single hook with a clean return surface. The hook is framework-agnostic
  * aside from React's `useCallback` / `useState` — no Next.js imports.
  *
- * @see state-machine.ts  — reducer that drives prompt state
+ * @see store.ts  — Zustand store + reducer that drives prompt state
  * @see send-message-utils.ts         — pure helpers reused here
  */
 
@@ -28,7 +28,7 @@ import {
 } from "@/domains/chat/lib/api.js";
 import { addTrustRule } from "@/domains/trust-rules/api.js";
 import type { DisplayMessage } from "@/domains/chat/lib/reconcile.js";
-import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type { DomainEvent as TurnEvent } from "@/domains/chat/lib/turn-state-machine.js";
 

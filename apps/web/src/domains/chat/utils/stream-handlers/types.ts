@@ -4,7 +4,7 @@ import type {
   SetStateAction,
 } from "react";
 
-import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { ChatEventStream } from "@/domains/chat/lib/api.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";

@@ -40,7 +40,7 @@ import { recordChatDiagnostic } from "@/domains/chat/lib/diagnostics.js";
 import { newStableId } from "@/domains/chat/lib/stable-id.js";
 import { saveDismissedSurfaceIds } from "@/domains/chat/lib/dismissedSurfacesStorage.js";
 import { isSending, type TurnState, type DomainEvent } from "@/domains/chat/lib/turn-state-machine.js";
-import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/store.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { PreChatOnboardingContext } from "@/lib/onboarding/prechat.js";
