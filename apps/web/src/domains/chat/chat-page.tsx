@@ -14,10 +14,7 @@ import {
   interactionReducer,
   INITIAL_INTERACTION_STATE,
 } from "@/domains/chat/lib/interaction-state-machine.js";
-import {
-  turnReducer,
-  INITIAL_TURN_STATE,
-} from "@/domains/chat/lib/turn-state-machine.js";
+import { useTurnStore } from "@/domains/chat/lib/use-turn-store.js";
 import type { DisplayMessage } from "@/domains/chat/lib/reconcile.js";
 import { ChatProvider } from "@/domains/chat/chat-context.js";
 import {
@@ -54,7 +51,7 @@ export function ChatPage() {
   const { assistantState, assistantId } = lifecycle;
 
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
-  const [turnState, dispatchTurn] = useReducer(turnReducer, INITIAL_TURN_STATE);
+  const dispatchTurn = useTurnStore((s) => s.dispatch);
   const [interactionState, dispatchInteraction] = useReducer(
     interactionReducer,
     INITIAL_INTERACTION_STATE,
@@ -119,8 +116,6 @@ export function ChatPage() {
     isKeyboardOpen: false,
     messages,
     setMessages,
-    turnState,
-    dispatchTurn,
     input,
     setInput,
     error,

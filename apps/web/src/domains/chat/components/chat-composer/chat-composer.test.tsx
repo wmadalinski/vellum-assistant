@@ -18,6 +18,7 @@ import {
   type ChatAttachment,
 } from "@/domains/chat/components/chat-attachments/index.js";
 import { INITIAL_TURN_STATE, type TurnState } from "@/domains/chat/lib/turn-state-machine.js";
+import { useTurnStore } from "@/domains/chat/lib/use-turn-store.js";
 
 import { ChatComposer, computeGhostSuffix, shouldSubmitOnEnter } from "@/domains/chat/components/chat-composer/chat-composer.js";
 
@@ -279,7 +280,13 @@ describe("computeGhostSuffix", () => {
 // HTML rendering — placeholder and send/stop button surface
 // ---------------------------------------------------------------------------
 
-function renderComposer(props: Partial<Parameters<typeof ChatComposer>[0]> = {}) {
+function renderComposer(props: Partial<Parameters<typeof ChatComposer>[0]> & { turnState?: TurnState } = {}) {
+  const { turnState, ...componentProps } = props;
+  if (turnState) {
+    useTurnStore.setState(turnState);
+  } else {
+    useTurnStore.setState(INITIAL_TURN_STATE);
+  }
   return renderToStaticMarkup(
     <ChatComposer
       input=""
@@ -294,10 +301,9 @@ function renderComposer(props: Partial<Parameters<typeof ChatComposer>[0]> = {})
       chatAttachments={[]}
       onAddAttachmentFiles={() => {}}
       onRemoveAttachment={() => {}}
-      turnState={INITIAL_TURN_STATE}
       onStopGenerating={() => {}}
       assistantId="asst_test"
-      {...props}
+      {...componentProps}
     />,
   );
 }
