@@ -1,11 +1,12 @@
 import { describe, expect, it } from "bun:test";
 
 import { makeCtx } from "@/domains/chat/utils/stream-handlers/test-helpers.js";
+
 import {
   handleSecretRequest,
   handleConfirmationRequest,
   handleContactRequest,
-} from "@/domains/chat/utils/stream-handlers/interaction-handlers.js";
+} from "@/domains/chat/interactions/stream-handlers.js";
 
 describe("handleSecretRequest", () => {
   it("dispatches SECRET_REQUEST and SHOW_SECRET", () => {

@@ -143,7 +143,7 @@ export {
 } from "@/domains/chat/lib/messages.js";
 
 // ---- interactions ----
-export type { SubmitSecretResponseResult } from "@/domains/chat/lib/interactions.js";
+export type { SubmitSecretResponseResult } from "@/domains/chat/interactions/api.js";
 export {
   getPendingInteractions,
   listConversationKeysWithPendingInteractions,
@@ -152,7 +152,7 @@ export {
   submitQuestionResponse,
   submitSecretResponse,
   submitTrustRule,
-} from "@/domains/chat/lib/interactions.js";
+} from "@/domains/chat/interactions/api.js";
 
 // ---- surfaces ----
 export type { SurfaceContentResponse } from "@/domains/chat/lib/surfaces.js";

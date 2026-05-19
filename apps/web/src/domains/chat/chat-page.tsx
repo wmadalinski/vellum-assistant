@@ -12,7 +12,7 @@ import { useAuth } from "@/lib/auth/auth-provider.js";
 import { useAssistantLifecycle } from "@/domains/chat/hooks/use-assistant-lifecycle.js";
 import {
   createInteractionStore,
-} from "@/domains/chat/lib/interaction-state-machine.js";
+} from "@/domains/chat/interactions/state-machine.js";
 import {
   turnReducer,
   INITIAL_TURN_STATE,

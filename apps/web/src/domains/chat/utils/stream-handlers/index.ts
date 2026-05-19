@@ -15,7 +15,7 @@ export {
   handleConfirmationRequest,
   handleContactRequest,
   handleQuestionRequest,
-} from "@/domains/chat/utils/stream-handlers/interaction-handlers.js";
+} from "@/domains/chat/interactions/stream-handlers.js";
 export {
   handleUISurfaceShow,
   handleUISurfaceUpdate,

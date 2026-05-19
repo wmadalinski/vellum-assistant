@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { InteractionStoreApi } from "@/domains/chat/lib/interaction-state-machine.js";
+import type { InteractionStoreApi } from "@/domains/chat/interactions/state-machine.js";
 import type { SubagentAction } from "@/domains/chat/lib/subagent-state.js";
 import type { ConversationListAction } from "@/domains/chat/lib/conversation-list-state.js";
 import type {

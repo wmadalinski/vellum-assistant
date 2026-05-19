@@ -4,7 +4,7 @@ import {
   hasActiveInteraction,
   interactionReducer,
   type InteractionState,
-} from "@/domains/chat/lib/interaction-state-machine.js";
+} from "@/domains/chat/interactions/state-machine.js";
 
 describe("interactionReducer", () => {
   // ----- Secret flow -----

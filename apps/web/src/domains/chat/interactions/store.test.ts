@@ -1,7 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
 import {
   createInteractionStore,
-} from "@/domains/chat/lib/interaction-state-machine.js";
+} from "@/domains/chat/interactions/state-machine.js";
 
 describe("createInteractionStore", () => {
   // --- Test 1: dispatch/getState/subscribe contract ---
